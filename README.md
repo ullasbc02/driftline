@@ -13,7 +13,7 @@ Modern systems fail due to **invisible execution changes**, not broken infrastru
 - Dashboards are green
 - Users still experience outages
 
-Driftline answers one question existing tools cannot:
+Driftline answers one question existing tools cannot
 
 > **Is my system behaving the same way in production as it does in staging?**
 
