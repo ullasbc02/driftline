@@ -92,3 +92,61 @@ driftline/
     └── roadmap.md
 
 ```
+## Getting Started
+
+### Prerequisites
+
+Docker & Docker Compose (or Docker Desktop) installed and running
+
+Optional: Python 3.11+ if you want to run the demo without Docker
+
+### Setup
+
+To start the demo stack
+From the repository root run:
+
+```
+docker-compose up --build
+```
+This will build and start:
+
+- payment-api (FastAPI) on http://localhost:8000
+- OpenTelemetry collector (logs exported to console)
+
+To stop and remove containers
+
+```
+docker-compose down
+```
+
+Other Docker Commands 
+```
+# View logs for all services
+docker-compose logs --no-color --timestamps
+
+# View logs for the payment-api only
+docker-compose logs payment-api
+```
+
+To test the payment endpoint
+
+```
+curl -X POST http://localhost:8000/payments/charge
+```
+- Expect HTTP 200 and a small JSON/text response from the demo API.
+  
+To check tracing (OTEL)
+
+- The collector prints traces to its logs.
+- After calling the endpoint you should see span log output in the console where compose is running.
+
+Run the demo service locally (without Docker)
+
+Create a virtualenv and install dependencies:
+
+```
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r demo/payment_api/requirements.txt
+python demo/payment_api/app.py
+```
