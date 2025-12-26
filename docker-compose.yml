@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   otel-collector:
     image: otel/opentelemetry-collector:0.96.0
@@ -19,3 +17,18 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
     depends_on:
       - otel-collector
+
+  driftline-ingest:
+    image: python:3.11-slim
+    working_dir: /app
+    volumes:
+      - ./ingest:/app/ingest
+    environment:
+      - PYTHONPATH=/app
+    depends_on:
+      - otel-collector
+    command: >
+      sh -c "pip install fastapi uvicorn opentelemetry-proto protobuf googleapis-common-protos &&
+             uvicorn ingest.main:app --host 0.0.0.0 --port 9000"
+    ports:
+      - "9000:9000"
