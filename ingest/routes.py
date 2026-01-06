@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request
+from ingest.event_stream import publish
 from ingest.normalizer import normalize_trace_request
 
 router = APIRouter(prefix="/ingest")
@@ -15,8 +16,8 @@ async def ingest_traces(request: Request):
     events = normalize_trace_request(payload)
 
     # For demo purposes, just print the events
-    print(f"Received {len(events)} execution events")
+    # print(f"Received {len(events)} execution events")
     for e in events:
-        print(e.dict())
+        publish(e)
 
     return {"status": "ok", "events": len(events)}
