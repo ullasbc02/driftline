@@ -41,21 +41,50 @@ services:
   profiler:
     image: python:3.11-slim
     working_dir: /app
+    entrypoint: ["/bin/sh"]
     volumes:
       - ./profiler:/app/profiler
+      - ./ingest:/app/ingest
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - DRIFTLINE_STREAM_KEY=driftline:events
       - DRIFTLINE_PROFILE_PREFIX=driftline:profiles
       - PROFILE_WINDOW_SEC=60
+      - PYTHONPATH=/app
     depends_on:
       - redis
-    command: >
-      sh -c "pip install redis &&
-             python profiler/consumer.py"
+    command: ["-c", "pip install redis && python profiler/consumer.py"]
 
-
+  graph-builder:
+    image: python:3.11-slim
+    working_dir: /app
+    entrypoint: ["/bin/sh"]
+    volumes:
+      - ./graph:/app/graph
+      - ./ingest:/app/ingest
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - DRIFTLINE_STREAM_KEY=driftline:events
+      - DRIFTLINE_GRAPH_PREFIX=driftline:graph
+      - GRAPH_WINDOW_SEC=60
+      - TRACE_TTL_SEC=120
+      - PYTHONPATH=/app
+    depends_on:
+      - redis
+    command: ["-c", "pip install redis && python graph/graph_builder_consumer.py"]
+  
+  fraud-service:
+    build:
+      context: ./demo/fraud_service
+    ports:
+      - "8001:8001"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - ENV=local
+    depends_on:
+      - otel-collector
 #   postgres:
 #     image: postgres:16
 #     environment:
