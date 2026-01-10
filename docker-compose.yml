@@ -33,8 +33,7 @@ services:
     image: python:3.11-slim
     working_dir: /app
     volumes:
-      - ./ingest:/app/ingest
-      - ./baseline:/app/baseline
+      - ./:/app
     environment:
       - PYTHONPATH=/app
       - REDIS_HOST=redis
@@ -99,6 +98,7 @@ services:
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - ENV=local
+      - ENABLE_SLOW_FRAUD=true
     depends_on:
       - otel-collector
     networks:
