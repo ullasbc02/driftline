@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import time
 import os
+import random
 
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry import trace
@@ -29,8 +30,16 @@ trace.get_tracer_provider().add_span_processor(span_processor)
 app = FastAPI()
 FastAPIInstrumentor.instrument_app(app)
 
+# Silent runtime toggle via env var
+ENABLE_SLOW_FRAUD = os.getenv("ENABLE_SLOW_FRAUD", "false").lower() == "true"
+
 @app.post("/fraud/check")
 def fraud_check():
-    # simulate fraud scoring latency
+    # normal behavior
     time.sleep(0.02)
-    return {"fraud_score": 0.03}
+
+    # silent regression triggered by feature flag / env
+    if ENABLE_SLOW_FRAUD:
+        time.sleep(random.uniform(0.2, 0.35))
+
+    return {"fraud_score": round(random.random(), 2)}

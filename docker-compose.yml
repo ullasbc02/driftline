@@ -7,11 +7,15 @@ services:
     ports:
       - "4317:4317"
       - "4318:4318"
+    networks:
+      - driftline
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
+    networks:
+      - driftline
 
   payment-api:
     build:
@@ -22,21 +26,28 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
     depends_on:
       - otel-collector
+    networks:
+      - driftline
 
   driftline-ingest:
     image: python:3.11-slim
     working_dir: /app
     volumes:
-      - ./ingest:/app/ingest
+      - ./:/app
     environment:
       - PYTHONPATH=/app
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
     depends_on:
       - otel-collector
+      - redis
     command: >
       sh -c "pip install fastapi uvicorn opentelemetry-proto protobuf googleapis-common-protos redis &&
              uvicorn ingest.main:app --host 0.0.0.0 --port 9000"
     ports:
       - "9000:9000"
+    networks:
+      - driftline
 
   profiler:
     image: python:3.11-slim
@@ -55,6 +66,8 @@ services:
     depends_on:
       - redis
     command: ["-c", "pip install redis && python profiler/consumer.py"]
+    networks:
+      - driftline
 
   graph-builder:
     image: python:3.11-slim
@@ -74,6 +87,8 @@ services:
     depends_on:
       - redis
     command: ["-c", "pip install redis && python graph/graph_builder_consumer.py"]
+    networks:
+      - driftline
   
   fraud-service:
     build:
@@ -83,8 +98,16 @@ services:
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - ENV=local
+      - ENABLE_SLOW_FRAUD=true
     depends_on:
       - otel-collector
+    networks:
+      - driftline
+
+networks:
+  driftline:
+    driver: bridge
+
 #   postgres:
 #     image: postgres:16
 #     environment:
