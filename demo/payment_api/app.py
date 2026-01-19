@@ -4,6 +4,7 @@ import os
 import requests
 #Wrap FastAPI so every request is traced automatically.
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
 # These define: who owns tracing and how spans are created
 from opentelemetry import trace
@@ -40,6 +41,8 @@ app = FastAPI()
 
 # Whenever FastAPI handles a request, automatically create spans.
 FastAPIInstrumentor.instrument_app(app)
+# Instrument outgoing HTTP requests to create child spans
+RequestsInstrumentor().instrument()
 
 @app.post("/payments/charge")
 def charge():
