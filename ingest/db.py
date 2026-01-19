@@ -52,10 +52,11 @@ def init_schema():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS evidence_packs (
             id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-            drift_event_id UUID REFERENCES drift_events(id),
+            drift_event_id TEXT NOT NULL,
             baseline_metrics JSONB NOT NULL,
             current_metrics JSONB NOT NULL,
             trace_samples JSONB NOT NULL,
+            graph_diff JSONB NOT NULL,
             explanation TEXT NOT NULL,
             created_at TIMESTAMPTZ NOT NULL
         )

@@ -1,0 +1,31 @@
+{
+  "name": "driftline",
+  "version": "1.0.0",
+  "description": "**Driftline** is a behavioral drift detection platform that compares how systems *actually execute work* across environments (staging vs production) to uncover latency, error, and execution-path mismatches missed by traditional observability tools.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "vite --config dashboard/vite.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ullasbc02/driftline.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ullasbc02/driftline/issues"
+  },
+  "homepage": "https://github.com/ullasbc02/driftline#readme",
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
+    "vite": "^7.3.1"
+  }
+}

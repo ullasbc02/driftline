@@ -7,6 +7,8 @@ from typing import Any, Dict, List
 from baseline.store import get_baseline  # uses Redis baseline JSON
 from drift.diff import diff_baseline_vs_current
 from drift.store import create_drift_event, list_drift_ids, get_drift
+from evidence.builder import build_latency_evidence
+from evidence.store import persist_evidence
 
 REDIS_HOST = "redis"
 REDIS_PORT = 6379
@@ -86,6 +88,38 @@ def check_drift(env: str = Query(...)):
     }
 
     drift = create_drift_event(payload)
+
+    # Generate and persist evidence packs for latency drift findings.
+    for f in findings:
+        if f.drift_type != "latency_drift":
+            continue
+
+        baseline_p95 = f.baseline.get("p95_ms") if isinstance(f.baseline, dict) else None
+        current_p95 = f.current.get("p95_ms") if isinstance(f.current, dict) else None
+        if baseline_p95 is None or current_p95 is None:
+            continue
+
+        subject = f.subject or ""
+        service = None
+        if subject.startswith("endpoint "):
+            parts = subject.split()
+            service = parts[1] if len(parts) >= 2 else None
+        elif subject.startswith("edge "):
+            parts = subject.split()
+            service = parts[1] if len(parts) >= 2 else None
+
+        if not service:
+            continue
+
+        pack = build_latency_evidence(
+            drift_event_id=drift.id,
+            service=service,
+            baseline_p95=baseline_p95,
+            current_p95=current_p95,
+            baseline_graph=baseline.get("graph", {}),
+            current_graph=current.get("graph", {}),
+        )
+        persist_evidence(pack)
     return {
         "status": "drift_detected",
         "drift_id": drift.id,
