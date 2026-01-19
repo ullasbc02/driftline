@@ -7,5 +7,7 @@ class EvidencePack(BaseModel):
     baseline_metrics: Dict[str, Any]
     current_metrics: Dict[str, Any]
     trace_samples: Dict[str, List[Dict[str, Any]]]
+    graph_diff: Dict[str, Any]      # NEW
     explanation: str
     created_at: datetime
+
