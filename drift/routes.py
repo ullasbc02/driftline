@@ -118,6 +118,7 @@ def check_drift(env: str = Query(...)):
             current_p95=current_p95,
             baseline_graph=baseline.get("graph", {}),
             current_graph=current.get("graph", {}),
+            baseline_captured_at_ms=int(baseline.get("captured_at", 0)) if baseline.get("captured_at") else None,
         )
         persist_evidence(pack)
     return {

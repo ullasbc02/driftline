@@ -37,8 +37,11 @@ services:
       - "8000:8000"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - USE_RATE_LIMIT=true
     depends_on:
       - otel-collector
+      - ratelimit-service
+      - fraud-service
     networks:
       - driftline
 
@@ -118,6 +121,21 @@ services:
       - otel-collector
     networks:
       - driftline
+  
+  ratelimit-service:
+    build:
+      context: ./demo/ratelimit_service
+    ports:
+      - "8002:8002"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
+      - ENV=local
+    depends_on:
+      - otel-collector
+      - fraud-service
+    networks:
+      - driftline
+
 
 networks:
   driftline:
