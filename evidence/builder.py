@@ -1,6 +1,7 @@
 from datetime import datetime
+from typing import Optional
 from evidence.models import EvidencePack
-from evidence.trace_sampler import sample_traces
+from evidence.trace_sampler import sample_traces, sample_traces_bounded
 from evidence.explainer import explain_latency_drift
 
 from evidence.graph_diff import diff_graphs
@@ -12,10 +13,32 @@ def build_latency_evidence(
     current_p95: float,
     baseline_graph: dict,
     current_graph: dict,
+    *,
+    baseline_captured_at_ms: Optional[int] = None,
 ):
+    """
+    Build evidence for a latency drift finding.
+    - If baseline_captured_at_ms is provided, sample traces time-bounded around it
+      and dedupe per trace_id (max duration per trace).
+    - Otherwise, retain previous behavior (recent spans, no dedupe) for compatibility.
+    """
 
-    traces_before = sample_traces(service)
-    traces_after = sample_traces(service)
+    if baseline_captured_at_ms is not None:
+        traces_before = sample_traces_bounded(
+            service,
+            limit=5,
+            before_ts=baseline_captured_at_ms,
+            dedupe=True,
+        )
+        traces_after = sample_traces_bounded(
+            service,
+            limit=5,
+            after_ts=baseline_captured_at_ms,
+            dedupe=True,
+        )
+    else:
+        traces_before = sample_traces(service)
+        traces_after = sample_traces(service)
 
     graph_diff = diff_graphs(baseline_graph, current_graph)
 

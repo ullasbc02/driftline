@@ -17,7 +17,7 @@ from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExport
 #describe service identity
 from opentelemetry.sdk.resources import Resource
 
-
+USE_RATE_LIMIT = os.getenv("USE_RATE_LIMIT", "false") == "true"
 resource = Resource.create({
     "service.name": "payments-api",
     "env": "local"
@@ -47,9 +47,16 @@ RequestsInstrumentor().instrument()
 @app.post("/payments/charge")
 def charge():
     time.sleep(0.05)
-    resp = requests.post("http://fraud-service:8001/fraud/check", timeout=2)
 
-    return {
-        "status": "charged",
-        "fraud": resp.json()
-    }
+    if USE_RATE_LIMIT:
+        resp = requests.post(
+            "http://ratelimit-service:8002/ratelimit/check",
+            timeout=2
+        )
+    else:
+        resp = requests.post(
+            "http://fraud-service:8001/fraud/check",
+            timeout=2
+        )
+
+    return {"status": "charged", "fraud": resp.json()}
