@@ -62,6 +62,24 @@ def init_schema():
         )
     """)
 
+    # Incident agent reports
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS incident_reports (
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+            drift_event_id TEXT NOT NULL UNIQUE,
+            env TEXT NOT NULL,
+            service TEXT NOT NULL,
+            severity INTEGER NOT NULL,
+            confidence DOUBLE PRECISION NOT NULL,
+            root_cause TEXT NOT NULL,
+            recommendation TEXT NOT NULL,
+            slack_message TEXT NOT NULL,
+            report_markdown TEXT NOT NULL,
+            payload JSONB NOT NULL,
+            created_at TIMESTAMPTZ NOT NULL
+        )
+    """)
+
     conn.commit()
     cur.close()
     conn.close()
