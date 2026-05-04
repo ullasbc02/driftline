@@ -1,6 +1,6 @@
 # Driftline
 
-**Detect behavioral drift in distributed systems using explicit baselines and execution graph diffs.**
+**Autonomous DevOps incident commander for behavioral drift in distributed systems.**
 
 Driftline sits on top of OpenTelemetry traces and answers a question traditional observability tools don’t:
 
@@ -43,6 +43,34 @@ Driftline then:
 * continuously compares current behavior to the baseline
 * detects **path drift**, **latency drift**, and **error drift**
 * produces a **stored evidence pack** explaining the change
+* runs an **incident agent** that investigates root cause, recommends remediation, notifies Slack, and generates an audit-ready report
+
+---
+
+##  Incident Commander Workflow
+
+```
+Detect drift
+   ↓
+Investigate root cause
+   ↓
+Decide action
+   ↓
+Create fix / rollback recommendation
+   ↓
+Notify team
+   ↓
+Generate incident report
+```
+
+The hackathon agent is exposed at:
+
+```bash
+curl -X POST "http://localhost:9000/agent/investigate/<DRIFT_ID>"
+curl "http://localhost:9000/agent/report/<DRIFT_ID>"
+```
+
+If `SLACK_WEBHOOK_URL` is set, Driftline posts to Slack. Without it, the notification is mocked and stored with the incident report for demos.
 
 ---
 
@@ -109,6 +137,10 @@ Baseline Snapshot
 Diff Engine
         ↓
 Drift Event + Evidence Pack
+        ↓
+Incident Agent
+        ↓
+Slack Alert + Markdown Incident Report
 ```
 
 ---

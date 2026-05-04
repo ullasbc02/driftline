@@ -37,7 +37,7 @@ services:
       - "8000:8000"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
-      - USE_RATE_LIMIT=true
+      - USE_RATE_LIMIT=false
     depends_on:
       - otel-collector
       - ratelimit-service
@@ -143,4 +143,3 @@ networks:
 
 volumes:
   pgdata:
-

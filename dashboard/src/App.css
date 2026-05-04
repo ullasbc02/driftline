@@ -1,0 +1,194 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #f5f7fb;
+  color: #172033;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button {
+  font: inherit;
+}
+
+.appShell {
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  border-right: 1px solid #dbe2ef;
+  background: #ffffff;
+  padding: 24px;
+}
+
+.sidebar h2,
+.detail h2,
+.detail h3,
+.emptyState h1 {
+  margin: 0;
+}
+
+.driftList {
+  display: grid;
+  gap: 8px;
+  list-style: none;
+  margin: 20px 0 0;
+  padding: 0;
+}
+
+.driftList button {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #d5deeb;
+  border-radius: 6px;
+  background: #f8fafc;
+  color: #24324a;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.workspace {
+  min-width: 0;
+  padding: 28px;
+}
+
+.detail,
+.panel,
+.emptyState {
+  max-width: 1080px;
+}
+
+.detailHeader,
+.sectionTitle {
+  align-items: center;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.muted {
+  color: #607086;
+  font-size: 13px;
+  margin: 6px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.primaryButton {
+  border: 0;
+  border-radius: 6px;
+  background: #176b87;
+  color: #ffffff;
+  cursor: pointer;
+  min-height: 40px;
+  padding: 0 16px;
+  white-space: nowrap;
+}
+
+.primaryButton:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.error {
+  background: #fff0f0;
+  border: 1px solid #f3b4b4;
+  border-radius: 6px;
+  color: #8b1e1e;
+  margin: 16px 0;
+  padding: 10px 12px;
+}
+
+.findingGrid,
+.commanderGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin: 18px 0 24px;
+}
+
+.finding,
+.agentResult {
+  background: #ffffff;
+  border: 1px solid #dbe2ef;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.finding span,
+label,
+.sectionTitle span {
+  color: #607086;
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.finding strong {
+  display: block;
+  font-size: 28px;
+  margin-top: 4px;
+}
+
+.finding p,
+.commanderGrid p {
+  margin: 8px 0 0;
+  overflow-wrap: anywhere;
+}
+
+.agentResult {
+  margin: 22px 0;
+}
+
+pre {
+  background: #111827;
+  border-radius: 8px;
+  color: #e5edf8;
+  line-height: 1.5;
+  margin: 10px 0 22px;
+  max-width: 100%;
+  overflow: auto;
+  padding: 16px;
+  white-space: pre-wrap;
+}
+
+.emptyState {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 70vh;
+}
+
+.emptyState p {
+  color: #607086;
+  max-width: 520px;
+}
+
+@media (max-width: 760px) {
+  .appShell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    border-bottom: 1px solid #dbe2ef;
+    border-right: 0;
+  }
+
+  .detailHeader,
+  .sectionTitle {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .primaryButton {
+    width: 100%;
+  }
+}

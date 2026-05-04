@@ -9,9 +9,9 @@ export default function DriftList({ onSelect }) {
   }, []);
 
   return (
-    <div>
+    <aside className="sidebar">
       <h2>Detected Drifts</h2>
-      <ul>
+      <ul className="driftList">
         {drifts.map(id => (
           <li key={id}>
             <button onClick={() => onSelect(id)}>
@@ -20,6 +20,6 @@ export default function DriftList({ onSelect }) {
           </li>
         ))}
       </ul>
-    </div>
+    </aside>
   );
 }
